@@ -50,3 +50,8 @@ func UDPSocket(proto, addr string, sockopts ...Option) (int, net.Addr, error) {
 func UnixSocket(proto, addr string, sockopts ...Option) (int, net.Addr, error) {
 	return udsSocket(proto, addr, sockopts...)
 }
+
+// GetUDPSocketAddr return sa of remoteAddr
+func GetUDPSocketAddr(network, address string) (sa unix.Sockaddr, remoteAddr *net.UDPAddr, err error) {
+	sa, _, remoteAddr, err = getUDPSockaddr(network, address)
+}

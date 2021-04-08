@@ -25,6 +25,7 @@
 package gnet
 
 import (
+	"github.com/panjf2000/gnet/errors"
 	"net"
 	"os"
 
@@ -144,6 +145,27 @@ func (c *conn) sendTo(buf []byte) error {
 }
 
 // ================================= Public APIs of gnet.Conn =================================
+
+func (c *conn) DialUDP(addr string) (conn Conn, err error) {
+	var (
+		fd int
+		sa unix.Sockaddr
+	)
+	network, address := parseProtoAddr(addr)
+
+	switch network {
+	case "udp", "udp4", "udp6":
+	default:
+		return nil, errors.ErrUnsupportedUDPProtocol
+	}
+	fd = c.fd
+	sa, _, err = socket.GetUDPSocketAddr(network, address)
+	if err != nil {
+		return nil, err
+	}
+	conn = newUDPConn(fd, c.loop, sa)
+	return conn, nil
+}
 
 func (c *conn) Read() []byte {
 	if c.inboundBuffer.IsEmpty() {

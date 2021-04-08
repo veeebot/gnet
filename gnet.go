@@ -143,6 +143,9 @@ type Conn interface {
 
 	// Close closes the current connection.
 	Close() error
+
+	// DialUDP connects to remoteAddr return a new Conn
+	DialUDP(addr string) (Conn, error)
 }
 
 type (
